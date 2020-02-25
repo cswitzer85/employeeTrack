@@ -42,9 +42,8 @@ This project was completed as an assignment for SMU Coding Boot Camp, and as suc
 
 
 ## Contact
-GitHub user name: cswitzer85
-Linked-In: cody-switzer-1429593a
-![alt text](https://www.linkedin.com/in/cody-switzer-1429593a/)
+[GitHub user name: cswitzer85](https://github.com/cswitzer85 "cswitzer85's GitHub")
+[Cody Switzer on Linked In](https://github.com/cswitzer85 "cody-switzer-1429593a's Linked In")
 e-mail: cswitzer85@gmail.com
 
 ## License(s)
