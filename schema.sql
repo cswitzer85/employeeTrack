@@ -8,7 +8,7 @@ CREATE TABLE employee (
     last_name, varchar(30),
     role_id, int, FK,
     manager_id, int, FK;
-      PRIMARY KEY (id)
+    PRIMARY KEY (id)
 
     );
 
