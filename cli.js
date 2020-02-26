@@ -1,25 +1,27 @@
 const mysql = require("mysql2/promise");
 const inquirer = require("inquirer");
 const consoleDotTable = require("console.table");
+let connection;
 
 const choiceOptions = ["Create an employee",
-						"Create a role",
-						"Create a department",
-						"View employee",
-						"View role",
-						"View department",
-						"Update employee role"
-					];
+	"Create a role",
+	"Create a department",
+	"View employee",
+	"View role",
+	"View department",
+	"Update employee role"
+];
 
 try {
-	cli();
+	cliConnection();
 } catch (error) {
 	console.log("error: ", error);
-	connection.end();
+	cliConnection.end();
 }
 
-async function cli() {
-	const connection = await mysql.createConnection({
+
+async function cliConnection() {
+		connection = await mysql.createConnection({
 		host: "localhost",
 		user: "root",
 		password: "rootroot",
@@ -58,7 +60,7 @@ async function cli() {
 				manager_id
 			} = await requestInput("What is the new employee's manager ID number", "manager_id");
 			console.table(first_name, last_name, role_id, manager_id);
-			cli();
+			cliConnection();
 			break;
 
 		case "Create a role": //title, salary, department_id
@@ -72,7 +74,7 @@ async function cli() {
 				department_id
 			} = await requestInput("What is the department id number for the new role?", "department_id");
 			console.table(title, salary, department_id);
-			cli();
+			cliConnection();
 			break;
 
 		case "Create a department": //name
@@ -80,27 +82,56 @@ async function cli() {
 				name
 			} = await requestInput("What is the name of the new department?", "name");
 			console.log(name);
-			cli();
+			cliConnection();
 			break;
 
-			case "View employee":
-			    console.table(employeeSomething);
-			    cli();
-			    break;
+		case "View employee":
+			readEmployee();
+			cliConnection();
+			break;
 
-			case "View role":
-			    console.log(roleSomething);
-			    cli();
-			    break;
+		case "View role":
+			readRole();
+			cliConnection();
+			break;
 
-			case "View department":
-			    console.log(departmentSomething);
-			    cli();
-			    break;
+		case "View department":
+			readDepartment();
+			cliConnection();
+			break;
 
-			case "Update employee role":
-			    console.log(differentThing);
-			    cli();
-			    break;
+		case "Update employee role":
+			console.log(differentThing);
+			cliConnection();
+			break;
 	}
 };
+
+function readEmployee() {
+	connection.query("SELECT * FROM cliDB.employee;", function(err, res) {
+	  if (err) throw err;
+	  console.table(res)
+	});
+  }
+
+  function readRole() {
+	connection.query("SELECT * FROM cliDB.role;", function(err, res) {
+	  if (err) throw err;
+	  console.table(res)
+	});
+  }
+
+  function readDepartment() {
+	connection.query("SELECT * FROM cliDB.department;", function(err, res) {
+	  if (err) throw err;
+	  console.table(res)
+	});
+  }
+
+function readCliDB() {
+	connection.query("SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, employee.manager_id, role.title, role.salary, department.name FROM employee"
+	+ "INNER join role on role.id = employee.role_id"
+	+ "INNER join department on department.id = role.department_id;", function(err, res) {
+	  if (err) throw err;
+	});
+  }
