@@ -21,7 +21,7 @@ try {
 
 
 async function cliConnection() {
-		connection = await mysql.createConnection({
+	connection = await mysql.createConnection({
 		host: "localhost",
 		user: "root",
 		password: "rootroot",
@@ -48,40 +48,102 @@ async function cliConnection() {
 
 		case "Create an employee": //first_name, last_name, role_id, manager_id
 			var {
-				firstName
-			} = await requestInput("What is the new employee's first name", "firstName");
+				fName
+			} = await inquirer.prompt({
+				type: "input",
+				name: "firstName",
+				message: "What is the new employee's first name",
+			})
+
 			var {
-				lastName
-			} = await requestInput("What is the new employee's last name", "lastName");
+				lName
+			} = await inquirer.prompt({
+				type: "input",
+				name: "lastName",
+				message: "What is the new employee's last name",
+			})
+
 			var {
-				role_id
-			} = await requestInput("What is the new employee's role ID number", "role_id");
+				rId
+			} = await inquirer.prompt({
+				type: "input",
+				name: "role_id",
+				message: "What is the new employee's role ID number",
+			})
 			var {
-				manager_id
-			} = await requestInput("What is the new employee's manager ID number", "manager_id");
-			console.table(first_name, last_name, role_id, manager_id);
+				mId
+			} = await inquirer.prompt({
+				type: "input",
+				name: "manager_id",
+				message: "What is the new employee's manager ID number",
+			})
+			connection.query("INSERT INTO employee SET ?", {
+					first_name: fName,
+					last_name: lName,
+					role_id: rId,
+					manager_id: mId
+				},
+				function (err) {
+					if (err) throw err;
+				}
+			);
+			console.log("The employee has been added.");
 			cliConnection();
 			break;
 
 		case "Create a role": //title, salary, department_id
 			var {
-				title
-			} = await requestInput("What is the title for the new role?", "title");
+				newTitle
+			} = await inquirer.prompt({
+				type: "input",
+				name: "titleName",
+				message: "What is the new title?",
+			})
+
 			var {
-				salary
-			} = await requestInput("What is the salary for the new role?", "salary");
+				newSalary
+			} = await inquirer.prompt({
+				type: "input",
+				name: "salaryNum",
+				message: "What is the salary?",
+			})
+
 			var {
-				department_id
-			} = await requestInput("What is the department id number for the new role?", "department_id");
-			console.table(title, salary, department_id);
+				newDep
+			} = await inquirer.prompt({
+				type: "input",
+				name: "depId",
+				message: "What department ID does this role fall under?",
+			})
+			connection.query("INSERT INTO role SET ?", {
+					titleName: newTitle,
+					salaryNum: newSalary,
+					depId: newDep,
+				},
+				function (err) {
+					if (err) throw err;
+				}
+			);
+			console.log("The new role has been added.");
 			cliConnection();
 			break;
 
 		case "Create a department": //name
 			var {
-				name
-			} = await requestInput("What is the name of the new department?", "name");
-			console.log(name);
+				depName
+			} = await inquirer.prompt({
+				type: "input",
+				name: "depName",
+				message: "What is the name of the department you'd like to add?",
+			})
+			connection.query("INSERT INTO department SET ?", {
+					name: depName
+				},
+				function (err) {
+					if (err) throw err;
+				}
+			);
+			console.log("Department has been added.");
 			cliConnection();
 			break;
 
@@ -101,37 +163,56 @@ async function cliConnection() {
 			break;
 
 		case "Update employee role":
-			console.log(differentThing);
+			var {
+				empName
+			} = await requestInput("What is the name of the employee you wish to reassign?", "empName");
+			var {
+				upId
+			} = await requestInput("What is the name of the employee you wish to reassign?", "upId");
+
+
+			updateEmployee();
 			cliConnection();
 			break;
 	}
 };
 
+// Read/View data =*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=
 function readEmployee() {
-	connection.query("SELECT * FROM cliDB.employee;", function(err, res) {
-	  if (err) throw err;
-	  console.table(res)
+	connection.query("SELECT * FROM cliDB.employee;", function (err, res) {
+		if (err) throw err;
+		console.table(res)
 	});
-  }
+}
 
-  function readRole() {
-	connection.query("SELECT * FROM cliDB.role;", function(err, res) {
-	  if (err) throw err;
-	  console.table(res)
+function readRole() {
+	connection.query("SELECT * FROM cliDB.role;", function (err, res) {
+		if (err) throw err;
+		console.table(res)
 	});
-  }
+}
 
-  function readDepartment() {
-	connection.query("SELECT * FROM cliDB.department;", function(err, res) {
-	  if (err) throw err;
-	  console.table(res)
+function readDepartment() {
+	connection.query("SELECT * FROM cliDB.department;", function (err, res) {
+		if (err) throw err;
+		console.table(res)
 	});
-  }
+}
 
 function readCliDB() {
-	connection.query("SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, employee.manager_id, role.title, role.salary, department.name FROM employee"
-	+ "INNER join role on role.id = employee.role_id"
-	+ "INNER join department on department.id = role.department_id;", function(err, res) {
-	  if (err) throw err;
+	connection.query("SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, employee.manager_id, role.title, role.salary, department.name FROM employee" +
+		"INNER join role on role.id = employee.role_id" +
+		"INNER join department on department.id = role.department_id;",
+		function (err, res) {
+			if (err) throw err;
+		});
+}
+
+// Update data =*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=
+function updateEmployee() {
+	connection.query("UPDATE employee SET employee.role_id = ? where employee.id = ?;", function (err, res) {
+		if (err) throw err;
+		console.table(res)
 	});
-  }
+}
+// Add data =*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=
