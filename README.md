@@ -34,7 +34,7 @@ takeNotes is a locally hosted project that allows the user to add, read and dele
 
 ## Usage
 Once the program is initiated, a prompt will appear. Simply make selections and add input where requested to add, view or change the data that has been selected.
-<!-- ![alt text](pictureURL goes here) -->
+![alt text](https://github.com/cswitzer85/employeeTrack/blob/master/Assets/employeTrackAddEmployee.png?raw=true)
 
 
 ## Contributing
